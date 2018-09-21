@@ -3,10 +3,10 @@ import sys
 # 1. nacitat mapu - V
 # 2. spustit skript se vstupem a precist vystup - V
 # 3. zvalidovat vystup - V
-# 4. provest vystup, vyhodnotit a upravit mapu - ongoing
-# 5. ulozit mezivysledek nekam, at' vime co se deje -
-# 6. hlavni smycka na spusteni
-# 7. killovat po 50ti tazich
+# 4. provest vystup, vyhodnotit a upravit mapu - V
+# 5. ulozit mezivysledek nekam, at' vime co se deje - klara
+# 6. hlavni smycka na spusteni - V
+# 7. killovat po 50ti tazich - V
 
 bot_colors = ["A", "B", "C", "D"]
 ACTIONS = ["BUM!", "UP", "DOWN", "LEFT", "RIGHT"]
