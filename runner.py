@@ -8,6 +8,7 @@ import sys
 # 5. ulozit mezivysledek nekam, at' vime co se deje
 
 bot_colors = ["A", "B", "C", "D"]
+ACTIONS = ["BUM!", "UP", "DOWN", "LEFT", "RIGHT"]
 
 
 def read_map(file_name):
@@ -35,6 +36,18 @@ def start():
 
         validate(map_, robot_color, robot_action)
 
+
+def validate(robot_map, robot_color, robot_action):
+    # robot_action: str
+    input = robot_action.split()
+    action = input[1]
+
+    if action not in ACTIONS:
+        return False
+
+    position = input[0]
+
+    return True
 
 if __name__ == "__main__":
     start()
