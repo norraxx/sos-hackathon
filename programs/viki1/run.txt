@@ -1,2 +1,2 @@
-python3 botka.py
+python3 programs/viki1/bota.py
 

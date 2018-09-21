@@ -1,24 +1,35 @@
 Souboj botu
 
 Pravidla:
-- Tahova hra
-- Na vstup botovi prilitne mapa + "barva" jeho hracu, napriklad mapa + \n\n "X".
-- mapa
-	- ASCII mapa NxM
+
+    - Tahova hra
+    - Na vstup botovi prilitne mapa + "barva" jeho hracu, napriklad mapa + \n\n "X".
+
+Mapa
+
+    - ASCII mapa NxM
+    ```
 		###########
 		#   X  X  #
 		#   ####  #
 		#  #    # #
 		#  Y  Y   #
 		###########
+    ```
+
 	- Pozice na mape se pocitaji od leveho horniho rohu od 0 (stejne jako vetsina pozic v poli)
 	- Soucasti mapy: 
+
+    ```
 		- # - zed'
 		- ' ' - pohybliva plocha
 		- ~ - voda (V prvni fazi neni pouzito)
+	```
+
 	- Hraci jsou vsechny pismenka mezi A az Z na mape
 
 Hrace:
+
 	- pohyb je dan skluzem az na doraz
 	- Mimo mapu "vyletet" nelze
 	- Hrace "strili" sebevrazdou do "vsech stran", tzn. nahoru, dolu, doleva, doprava, neco jako bomba v bombermanu
@@ -27,11 +38,13 @@ Hrace:
 	- Zdi zastavuji strely
 
 Body:
+
 	- Zabiti protihrace +2 body
 	- Zabiti sveho spoluhrace -1 bod
 	- Jenom tak odpalit hrace = 0 bodu
 
 Tahy:
+
 	- Jeden tah obsahuje vstup (mapa + barva hracu) a botem vypocitany vystup na obrazovku
 	Vystup:
 		- pozice panacka ve tvaru "X:Y" (pocitano od leveho horniho rohu) + akce 
@@ -47,8 +60,8 @@ Tahy:
 Vyhrava ten hrac, kdo na konci hry ma nejvice bodu.
 
 Cile:
+
 	- napsat bota
     - napsat spoustece botu
 
 Jazyk: Libovolny, jen at' jde spustit normalne z bashe
-

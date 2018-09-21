@@ -23,7 +23,7 @@ def read_map(file_name):
 def run_map(map_, position, action, robot_color):
     xmax = len(map_[0])
     ymax = len(map_)
-    x, y = MOVE[ACTIONS.index(action)]
+    y, x = MOVE[ACTIONS.index(action)]
     xpos, ypos = position
 
     new_map = []
@@ -31,31 +31,34 @@ def run_map(map_, position, action, robot_color):
         new_map.append([row[i] for i, letter in enumerate(row)])
     map_ = new_map
 
-    map_[xpos][ypos] = " "
+    map_[ypos][xpos] = " "
     if action == ACTIONS[0]:  # BUM!
-        while xpos < xmax and map_[xpos+1][ypos] != "#":
-            map_[xpos][ypos] = " "
+        while xpos < xmax and map_[ypos][xpos+1] != "#":
+            map_[ypos][xpos] = " "
             xpos += 1
 
-        while xpos <= 0 and map_[xpos-1][ypos] != "#":
-            map_[xpos][ypos] = " "
+        while xpos <= 0 and map_[ypos][xpos-1] != "#":
+            map_[ypos][xpos] = " "
             xpos -= 1
 
-        while ypos < ymax and map_[xpos][ypos+1] != "#":
-            map_[xpos][ypos] = " "
+        while ypos < ymax and map_[ypos+1][xpos] != "#":
+            map_[ypos][xpos] = " "
             ypos += 1
 
-        while ypos <= 0 and map_[xpos][ypos-1] != "#":
-            map_[xpos][ypos] = " "
+        while ypos <= 0 and map_[ypos-1][xpos] != "#":
+            map_[ypos][xpos] = " "
             ypos -= 1
+        pass
     else:
-        while x <= 0 and x < xmax and y <= 0 and y < ymax and map_[xpos+x][ypos+y] == " ":
+        while 0 <= xpos < xmax and 0 <= ypos < ymax and map_[ypos + y][xpos + x] == " ":
             xpos += x
             ypos += y
-        map_[x][y] = robot_color
+        map_[ypos][xpos] = robot_color
+
     map_ = ["".join(row) for row in map_]
     for row in map_:
         print(row)
+
     return map_
 
 
@@ -71,8 +74,13 @@ def start():
     bot_names = sys.argv[2:]
 
     map_ = read_map(map_name)
-    step_count = len(bot_names) * 50
+    step = 0
+    max_step_count = len(bot_names) * 50
+
     for i, bot_name in enumerate(bot_names):
+        if step > max_step_count:
+            print("WAT!??")
+            break
         robot_color = bot_colors[i]
         print ("\n".join(map_))
         robot_action = run_script(bot_name, map_, robot_color)
@@ -81,8 +89,8 @@ def start():
         if not valid:
             raise Exception("WTF!", robot_action)
         # todo: klara
-        new_map = run_map(map_, position, action, robot_color)
-        break
+        map_ = run_map(map_, position, action, robot_color)
+        step += 1
 
 
 def validate(robot_map, robot_color, robot_action):
