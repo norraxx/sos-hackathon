@@ -129,17 +129,128 @@ def validate(robot_map, robot_color, robot_action):
         return False, (None, None), None, None
 
 
+def update_path_up(new_robot_map, new_robot_position, is_move=False):
+    for index in range(new_robot_position[1] - 1, -1, -1):
+        if new_robot_map[index][new_robot_position[0]] == "#":
+            new_char = "#"
+            new_row = (
+                new_robot_map[index][:new_robot_position[0]]
+                + new_char
+                + new_robot_map[index][(new_robot_position[0] + 1):]
+            )
+            new_robot_map[index] = new_row
+            break
+        elif (
+            new_robot_map[index][new_robot_position[0]] == " "
+            or new_robot_map[index][new_robot_position[0]] == "~"
+        ):
+            new_char = "*"
+        else:
+            new_char = "@"
+        new_row = (
+            new_robot_map[index][:new_robot_position[0]]
+            + new_char
+            + new_robot_map[index][(new_robot_position[0] + 1):]
+        )
+        new_robot_map[index] = new_row
+    return new_robot_map
+
+
+def update_path_down(new_robot_map, new_robot_position, is_move=False):
+    for index in range(new_robot_position[1] + 1, len(new_robot_map)):
+        if new_robot_map[index][new_robot_position[0]] == "#":
+            new_char = "#"
+            new_row = (
+                new_robot_map[index][:new_robot_position[0]]
+                + new_char
+                + new_robot_map[index][(new_robot_position[0] + 1):]
+            )
+            new_robot_map[index] = new_row
+            break
+        elif (
+            new_robot_map[index][new_robot_position[0]] == " "
+            or new_robot_map[index][new_robot_position[0]] == "~"
+        ):
+            new_char = "*"
+        else:
+            new_char = "@"
+        new_row = (
+            new_robot_map[index][:new_robot_position[0]]
+            + new_char
+            + new_robot_map[index][(new_robot_position[0] + 1):]
+        )
+        new_robot_map[index] = new_row
+    return new_robot_map
+
+
+def update_path_left(new_robot_map, new_robot_position, is_move=False):
+    new_row = new_robot_map[new_robot_position[1]][new_robot_position[0]:]
+    for index in range(new_robot_position[0] - 1, -1, -1):
+        if new_robot_map[new_robot_position[1]][index] == "#":
+            new_row = ("#" + new_row)
+            break
+        elif (
+            new_robot_map[new_robot_position[1]][index] == " "
+            or new_robot_map[new_robot_position[1]][index] == "~"
+        ):
+            new_row = ("*" + new_row)
+        else:
+            new_row = ("@" + new_row)
+
+    new_robot_map[new_robot_position[1]] = new_row
+    return new_robot_map
+
+
+def update_path_right(new_robot_map, new_robot_position, is_move=False):
+    new_row = new_robot_map[new_robot_position[1]][:(new_robot_position[0] + 1)]
+    for index in range(new_robot_position[0] + 1, len(new_robot_map[0])):
+        if new_robot_map[new_robot_position[1]][index] == "#":
+            new_row += "#"
+            break
+        elif (
+            new_robot_map[new_robot_position[1]][index] == " "
+            or new_robot_map[new_robot_position[1]][index] == "~"
+        ):
+            new_row += "*"
+        else:
+            new_row += "@"
+
+    new_robot_map[new_robot_position[1]] = new_row
+    return new_robot_map
+
+
 def get_map_to_log(old_robot_map, robot_color, new_robot_position, robot_action):
-    new_robot_map = []
+    new_robot_map = old_robot_map
 
     if robot_action == "BUM!":
-        for index, row in enumerate(old_robot_map):
-            new_column = ""
-            for column in row:
-                pass
-            new_robot_map[index] = new_column
+        # oznacim vybuchleho bota
+        new_robot_map[new_robot_position[1]] = (
+            new_robot_map[new_robot_position[1]][:new_robot_position[0]]
+            + "@"
+            + new_robot_map[new_robot_position[1]][(new_robot_position[0] + 1):]
+        )
+
+        # vybuch nahoru
+        new_robot_map = update_path_up(new_robot_map, new_robot_position)
+
+        # vybuch dolu
+        new_robot_map = update_path_down(new_robot_map, new_robot_position)
+
+        # vybuch do leva
+        new_robot_map = update_path_left(new_robot_map, new_robot_position)
+
+        # vybuch do prava
+        new_robot_map = update_path_right(new_robot_map, new_robot_position)
+
     else:
-        pass
+        if robot_action == "UP":
+            pass
+        elif robot_action == "DOWN":
+            pass
+        elif robot_action == "LEFT":
+            pass
+        elif robot_action == "RIGHT":
+            pass
 
     return new_robot_map
 
