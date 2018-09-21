@@ -21,6 +21,16 @@ def read_map(file_name):
 
 
 def run_map(map_, position, action, robot_color):
+    score = 0
+
+    def compute_score(inner_map, ypos, xpos):
+        score = 0
+        if map_[ypos][xpos] == robot_color:
+            score -= 1
+        elif map_[ypos][xpos] in bot_colors:
+            score += 2
+        return score
+
     xmax = len(map_[0])
     ymax = len(map_)
     y, x = MOVE[ACTIONS.index(action)]
@@ -35,18 +45,22 @@ def run_map(map_, position, action, robot_color):
     if action == ACTIONS[0]:  # BUM!
         while 0 <= xpos < xmax and map_[ypos][xpos+1] != "#":
             xpos += 1
+            score += compute_score(map_, ypos, xpos)
             map_[ypos][xpos] = " "
 
         while 0 <= xpos < xmax and map_[ypos][xpos-1] != "#":
             xpos -= 1
+            score += compute_score(map_, ypos, xpos)
             map_[ypos][xpos] = " "
 
         while 0 <= ypos < ymax and map_[ypos+1][xpos] != "#":
             ypos += 1
+            score += compute_score(map_, ypos, xpos)
             map_[ypos][xpos] = " "
 
         while 0 <= ypos < ymax and map_[ypos-1][xpos] != "#":
             ypos -= 1
+            score += compute_score(map_, ypos, xpos)
             map_[ypos][xpos] = " "
     else:
         while 0 <= xpos < xmax and 0 <= ypos < ymax and map_[ypos + y][xpos + x] == " ":
@@ -56,7 +70,7 @@ def run_map(map_, position, action, robot_color):
 
     map_ = ["".join(row) for row in map_]
 
-    return map_
+    return map_, score
 
 
 def run_script(bot_name, map_, robot_color):
@@ -73,24 +87,38 @@ def start():
     map_ = read_map(map_name)
     step = 0
     max_step_count = len(bot_names) * MAX_STEPS
+    scores = {}
+    for i, bot_name in enumerate(bot_names):
+        scores[bot_colors[i]] = 0
 
-    for _ in range(MAX_STEPS):
-        for i, bot_name in enumerate(bot_names):
-            if step > max_step_count:
-                print("WAT!??")
+    try:
+        bots_ended = {}
+        for _ in range(MAX_STEPS):
+            if len(bots_ended) == len(bot_names):
                 break
-            robot_color = bot_colors[i]
-            print("\n".join(map_))
-            robot_action = run_script(bot_name, map_, robot_color)
-            print(bot_name, robot_action)
-            valid, position, action, text = validate(map_, robot_color, robot_action)
-            if not valid:
-                raise Exception("WTF!", robot_action)
-            # todo: klara
-            map_ = run_map(map_, position, action, robot_color)
+            for i, bot_name in enumerate(bot_names):
+                if step > max_step_count:
+                    print("WAT!??")
+                    break
+                robot_color = bot_colors[i]
+                bot_can_play = robot_color in "".join(map_)
+                if not bot_can_play:
+                    bots_ended[robot_color] = 1
+                    break
 
-            step += 1
-#        break
+                robot_action = run_script(bot_name, map_, robot_color)
+                print("\n".join(map_))
+                print(bot_name, robot_action)
+                valid, position, action, text = validate(map_, robot_color, robot_action)
+                if not valid:
+                    raise Exception("WTF!", robot_action)
+                # todo: klara
+                map_, score = run_map(map_, position, action, robot_color)
+                scores[robot_color] += score
+                step += 1
+    except:
+        pass
+    print(scores)
 
 
 def validate(robot_map, robot_color, robot_action):
