@@ -32,7 +32,7 @@ def start():
         with open("programs/{}/run.txt".format(bot_name), "r") as f:
             run_command = f.readline().strip().split()
         p = subprocess.Popen(run_command, stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT)
-        robot_action = p.communicate(input="\n".join(map_) + "\n")[0]
+        robot_action = p.communicate(input=("\n".join(map_) + "\n").encode('raw_unicode_escape'))[0].decode()
 
         validate(map_, robot_color, robot_action)
 
