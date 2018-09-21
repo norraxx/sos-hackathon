@@ -12,6 +12,7 @@ import sys
 bot_colors = ["A", "B", "C", "D"]
 ACTIONS = ["BUM!", "UP", "DOWN", "LEFT", "RIGHT"]
 MOVE = [(0, 0), (-1, 0), (1, 0), (0, -1), (0, 1)]
+MAX_STEPS = 20
 
 
 def read_map(file_name):
@@ -33,22 +34,21 @@ def run_map(map_, position, action, robot_color):
 
     map_[ypos][xpos] = " "
     if action == ACTIONS[0]:  # BUM!
-        while xpos < xmax and map_[ypos][xpos+1] != "#":
-            map_[ypos][xpos] = " "
+        while 0 <= xpos < xmax and map_[ypos][xpos+1] != "#":
             xpos += 1
-
-        while xpos <= 0 and map_[ypos][xpos-1] != "#":
             map_[ypos][xpos] = " "
+
+        while 0 <= xpos < xmax and map_[ypos][xpos-1] != "#":
             xpos -= 1
-
-        while ypos < ymax and map_[ypos+1][xpos] != "#":
             map_[ypos][xpos] = " "
+
+        while 0 <= ypos < ymax and map_[ypos+1][xpos] != "#":
             ypos += 1
-
-        while ypos <= 0 and map_[ypos-1][xpos] != "#":
             map_[ypos][xpos] = " "
+
+        while 0 <= ypos < ymax and map_[ypos-1][xpos] != "#":
             ypos -= 1
-        pass
+            map_[ypos][xpos] = " "
     else:
         while 0 <= xpos < xmax and 0 <= ypos < ymax and map_[ypos + y][xpos + x] == " ":
             xpos += x
@@ -56,8 +56,6 @@ def run_map(map_, position, action, robot_color):
         map_[ypos][xpos] = robot_color
 
     map_ = ["".join(row) for row in map_]
-    for row in map_:
-        print(row)
 
     return map_
 
@@ -75,9 +73,9 @@ def start():
 
     map_ = read_map(map_name)
     step = 0
-    max_step_count = len(bot_names) * 50
+    max_step_count = len(bot_names) * MAX_STEPS
 
-    for _ in range(50):
+    for _ in range(MAX_STEPS):
         for i, bot_name in enumerate(bot_names):
             if step > max_step_count:
                 print("WAT!??")
@@ -85,13 +83,14 @@ def start():
             robot_color = bot_colors[i]
             print("\n".join(map_))
             robot_action = run_script(bot_name, map_, robot_color)
-            print(robot_action)
+            print(bot_name, robot_action)
             valid, position, action, text = validate(map_, robot_color, robot_action)
             if not valid:
                 raise Exception("WTF!", robot_action)
             # todo: klara
             map_ = run_map(map_, position, action, robot_color)
             step += 1
+#        break
 
 
 def validate(robot_map, robot_color, robot_action):
@@ -103,7 +102,7 @@ def validate(robot_map, robot_color, robot_action):
         action = input[1]
 
         if action not in ACTIONS:
-            print ('invalid actions', action)
+            print('invalid actions', action)
             return False, (None, None), None, None
 
         position = input[0]

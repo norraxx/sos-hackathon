@@ -1,1 +1,1 @@
-python3 bonedestroyer.py
+python3 programs/jask/bonedestroyer.py
