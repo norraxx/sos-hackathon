@@ -1,8 +1,8 @@
 import subprocess
 from typing import List
 import sys
-# 1. nacitat mapu
-# 2. spustit skript se vstupem a precist vystup
+# 1. nacitat mapu - V
+# 2. spustit skript se vstupem a precist vystup - V
 # 3. zvalidovat vystup
 # 4. provest vystup, vyhodnotit a upravit mapu
 # 5. ulozit mezivysledek nekam, at' vime co se deje
@@ -21,6 +21,13 @@ def run_map(map, bot):
     pass
 
 
+def run_script(bot_name, map_, robot_color):
+    with open("programs/{}/run.txt".format(bot_name), "r") as f:
+        run_command = f.readline().strip().split()
+    p = subprocess.Popen(run_command, stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT)
+    return p.communicate(input=("\n".join(map_) + "\n" + robot_color + "\n").encode('raw_unicode_escape'))[0].decode()
+
+
 def start():
     map_name = sys.argv[1]
     bot_names = sys.argv[2:]
@@ -29,10 +36,7 @@ def start():
     step_count = len(bot_names) * 50
     for i, bot_name in enumerate(bot_names):
         robot_color = bot_colors[i]
-        with open("programs/{}/run.txt".format(bot_name), "r") as f:
-            run_command = f.readline().strip().split()
-        p = subprocess.Popen(run_command, stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT)
-        robot_action = p.communicate(input=("\n".join(map_) + "\n").encode('raw_unicode_escape'))[0].decode()
+        robot_action = run_script(bot_name, map_, robot_color)
 
         validate(map_, robot_color, robot_action)
 
