@@ -65,3 +65,6 @@ Cile:
     - napsat spoustece botu
 
 Jazyk: Libovolny, jen at' jde spustit normalne z bashe
+
+Spusteni:
+    `python3 runner.py maps/map5.txt tepek2 viki1`
