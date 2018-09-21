@@ -14,7 +14,7 @@ ACTIONS = ["BUM!", "UP", "DOWN", "LEFT", "RIGHT"]
 def read_map(file_name):
     # type: (str) -> List[str]
     with open(file_name, "r") as f:
-        return [row.strip() for row in f.readline()]
+        return [row.strip() for row in f.read().split("\n")]
 
 
 def run_map(map, bot):
@@ -27,12 +27,12 @@ def start():
 
     map_ = read_map(map_name)
     step_count = len(bot_names) * 50
-    for i, bot in enumerate(bot_names):
+    for i, bot_name in enumerate(bot_names):
         robot_color = bot_colors[i]
-        with open(f"{bot}/run.txt", "r") as f:
+        with open("programs/{}/run.txt".format(bot_name), "r") as f:
             run_command = f.readline().strip().split()
         p = subprocess.Popen(run_command, stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT)
-        robot_action = p.communicate(input=map_ + "\n")[0]
+        robot_action = p.communicate(input="\n".join(map_) + "\n")[0]
 
         validate(map_, robot_color, robot_action)
 
@@ -48,6 +48,7 @@ def validate(robot_map, robot_color, robot_action):
     position = input[0]
 
     return True
+
 
 if __name__ == "__main__":
     start()
