@@ -9,12 +9,15 @@ from time import sleep
 # 6. hlavni smycka na spusteni - V
 # 7. killovat po 50ti tazich - V
 
-bot_colors = ["A", "B", "C", "D"]
+BOT_COLORS = ["A", "B", "C", "D"]
 ACTIONS = ["BUM!", "UP", "DOWN", "LEFT", "RIGHT"]
 MOVE = [(0, 0), (-1, 0), (1, 0), (0, -1), (0, 1)]
 MOVE_ACTION = ["*", "^", "v", "<", ">"]
-MAX_STEPS = 50
-SLEEP_TIME = 1
+MAX_STEPS = 10
+SLEEP_TIME = 0.1
+
+COLOR_OFF = '\033[0m'
+COLORS = ['\033[0;31m', '\033[0;32m', '\033[0;33m', '\033[0;34m', '\033[0;35m', '\033[0;36m', '\033[0;37m']
 
 
 def read_map(file_name):
@@ -30,7 +33,7 @@ def run_map(map_, position, action, robot_color):
         score = 0
         if inner_map[ypos][xpos] == robot_color:
             score -= 1
-        elif inner_map[ypos][xpos] in bot_colors:
+        elif inner_map[ypos][xpos] in BOT_COLORS:
             score += 2
         return score
 
@@ -45,10 +48,11 @@ def run_map(map_, position, action, robot_color):
         new_map.append([row[i] for i, letter in enumerate(row)])
         copy_map.append([row[i] for i, letter in enumerate(row)])
     map_ = new_map
+    draw_color = COLORS[BOT_COLORS.index(robot_color)]
 
     map_[ypos][xpos] = " "  # zrusime aktualni pozici, uz tam nikdy nikdo nebude
     move_char = MOVE_ACTION[ACTIONS.index(action)]
-    copy_map[ypos][xpos] = move_char
+    copy_map[ypos][xpos] = draw_color + move_char + COLOR_OFF
 
     if action == ACTIONS[0]:  # BUM!
         tmp_xpos = xpos
@@ -56,35 +60,35 @@ def run_map(map_, position, action, robot_color):
             tmp_xpos += 1
             score += compute_score(map_, ypos, tmp_xpos)
             map_[ypos][tmp_xpos] = " "
-            copy_map[ypos][tmp_xpos] = move_char
+            copy_map[ypos][tmp_xpos] = draw_color + move_char + COLOR_OFF
 
         tmp_xpos = xpos
         while 0 <= tmp_xpos < xmax and map_[ypos][tmp_xpos-1] != "#":
             tmp_xpos -= 1
             score += compute_score(map_, ypos, tmp_xpos)
             map_[ypos][tmp_xpos] = " "
-            copy_map[ypos][tmp_xpos] = move_char
+            copy_map[ypos][tmp_xpos] = draw_color + move_char + COLOR_OFF
 
         tmp_ypos = ypos
         while 0 <= tmp_ypos < ymax and map_[tmp_ypos+1][xpos] != "#":
             tmp_ypos += 1
             score += compute_score(map_, tmp_ypos, xpos)
             map_[tmp_ypos][xpos] = " "
-            copy_map[tmp_ypos][xpos] = move_char
+            copy_map[tmp_ypos][xpos] = draw_color + move_char + COLOR_OFF
 
         tmp_ypos = ypos
         while 0 <= tmp_ypos < ymax and map_[tmp_ypos-1][xpos] != "#":
             tmp_ypos -= 1
             score += compute_score(map_, tmp_ypos, xpos)
             map_[tmp_ypos][xpos] = " "
-            copy_map[tmp_ypos][xpos] = move_char
+            copy_map[tmp_ypos][xpos] = draw_color + move_char + COLOR_OFF
     else:
         while 0 <= xpos < xmax and 0 <= ypos < ymax and map_[ypos + y][xpos + x] == " ":
             xpos += x
             ypos += y
-            copy_map[ypos][xpos] = move_char
+            copy_map[ypos][xpos] = draw_color + move_char + COLOR_OFF
         map_[ypos][xpos] = robot_color
-        copy_map[ypos][xpos] = robot_color
+        copy_map[ypos][xpos] = robot_color + COLOR_OFF
 
     map_ = ["".join(row) for row in map_]
     copy_map = ["".join(row) for row in copy_map]
@@ -107,8 +111,8 @@ def start():
     max_step_count = len(bot_names) * MAX_STEPS
     scores = {}
     for i, bot_name in enumerate(bot_names):
-        scores[bot_colors[i]] = 0
-
+        scores[BOT_COLORS[i]] = 0
+    print("\n".join(map_))
     try:
         bots_ended = {}
         for _ in range(MAX_STEPS):
@@ -119,7 +123,7 @@ def start():
                 if step > max_step_count:
                     print("WAT!??")
                     break
-                robot_color = bot_colors[i]
+                robot_color = BOT_COLORS[i]
                 bot_can_play = robot_color in "".join(map_)
                 if not bot_can_play:
                     bots_ended[robot_color] = 1
@@ -137,6 +141,8 @@ def start():
                 scores[robot_color] += score
                 step += 1
                 sleep(SLEEP_TIME)
+            if len(bots_ended) == len(bot_names) -1:
+                break
     except:
         pass
     print(scores)
