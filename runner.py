@@ -74,5 +74,20 @@ def validate(robot_map, robot_color, robot_action):
         return False, (None, None), None, None
 
 
+def get_map_to_log(old_robot_map, robot_color, new_robot_position, robot_action):
+    new_robot_map = []
+
+    if robot_action == "BUM!":
+        for index, row in enumerate(old_robot_map):
+            new_column = ""
+            for column in row:
+                pass
+            new_robot_map[index] = new_column
+    else:
+        pass
+
+    return new_robot_map
+
+
 if __name__ == "__main__":
     start()
