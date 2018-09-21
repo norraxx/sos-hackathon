@@ -1,5 +1,4 @@
 import subprocess
-from typing import List
 import sys
 # 1. nacitat mapu - V
 # 2. spustit skript se vstupem a precist vystup - V
@@ -89,6 +88,7 @@ def start():
                 raise Exception("WTF!", robot_action)
             # todo: klara
             map_ = run_map(map_, position, action, robot_color)
+
             step += 1
 #        break
 
