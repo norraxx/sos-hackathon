@@ -25,9 +25,9 @@ def run_map(map_, position, action, robot_color):
 
     def compute_score(inner_map, ypos, xpos):
         score = 0
-        if map_[ypos][xpos] == robot_color:
+        if inner_map[ypos][xpos] == robot_color:
             score -= 1
-        elif map_[ypos][xpos] in bot_colors:
+        elif inner_map[ypos][xpos] in bot_colors:
             score += 2
         return score
 
@@ -41,27 +41,34 @@ def run_map(map_, position, action, robot_color):
         new_map.append([row[i] for i, letter in enumerate(row)])
     map_ = new_map
 
-    map_[ypos][xpos] = " "
+    print("'{}'".format(map_[ypos][xpos]), ypos, xpos)
+    map_[ypos][xpos] = " "  # zrusime aktualni pozici, uz tam nikdy nikdo nebude
+
     if action == ACTIONS[0]:  # BUM!
-        while 0 <= xpos < xmax and map_[ypos][xpos+1] != "#":
-            xpos += 1
-            score += compute_score(map_, ypos, xpos)
-            map_[ypos][xpos] = " "
+        tmp_xpos = xpos
+        while 0 <= tmp_xpos < xmax and map_[ypos][tmp_xpos+1] != "#":
+            tmp_xpos += 1
+            score += compute_score(map_, ypos, tmp_xpos)
+            map_[ypos][tmp_xpos] = " "
 
-        while 0 <= xpos < xmax and map_[ypos][xpos-1] != "#":
-            xpos -= 1
-            score += compute_score(map_, ypos, xpos)
-            map_[ypos][xpos] = " "
+        tmp_xpos = xpos
+        while 0 <= tmp_xpos < xmax and map_[ypos][tmp_xpos-1] != "#":
+            tmp_xpos -= 1
+            score += compute_score(map_, ypos, tmp_xpos)
+            map_[ypos][tmp_xpos] = " "
 
-        while 0 <= ypos < ymax and map_[ypos+1][xpos] != "#":
-            ypos += 1
-            score += compute_score(map_, ypos, xpos)
-            map_[ypos][xpos] = " "
+        tmp_ypos = ypos
+        while 0 <= tmp_ypos < ymax and map_[tmp_ypos+1][xpos] != "#":
+            tmp_ypos += 1
+            print("'{}'".format(map_[tmp_ypos][xpos]), tmp_ypos, xpos)
+            score += compute_score(map_, tmp_ypos, xpos)
+            map_[tmp_ypos][xpos] = " "
 
-        while 0 <= ypos < ymax and map_[ypos-1][xpos] != "#":
-            ypos -= 1
-            score += compute_score(map_, ypos, xpos)
-            map_[ypos][xpos] = " "
+        tmp_ypos = ypos
+        while 0 <= tmp_ypos < ymax and map_[tmp_ypos-1][xpos] != "#":
+            tmp_ypos -= 1
+            score += compute_score(map_, tmp_ypos, xpos)
+            map_[tmp_ypos][xpos] = " "
     else:
         while 0 <= xpos < xmax and 0 <= ypos < ymax and map_[ypos + y][xpos + x] == " ":
             xpos += x
