@@ -41,7 +41,6 @@ def run_map(map_, position, action, robot_color):
         new_map.append([row[i] for i, letter in enumerate(row)])
     map_ = new_map
 
-    print("'{}'".format(map_[ypos][xpos]), ypos, xpos)
     map_[ypos][xpos] = " "  # zrusime aktualni pozici, uz tam nikdy nikdo nebude
 
     if action == ACTIONS[0]:  # BUM!
@@ -60,7 +59,6 @@ def run_map(map_, position, action, robot_color):
         tmp_ypos = ypos
         while 0 <= tmp_ypos < ymax and map_[tmp_ypos+1][xpos] != "#":
             tmp_ypos += 1
-            print("'{}'".format(map_[tmp_ypos][xpos]), tmp_ypos, xpos)
             score += compute_score(map_, tmp_ypos, xpos)
             map_[tmp_ypos][xpos] = " "
 
