@@ -121,8 +121,8 @@ class Game:
             score = self.score
         whole = sum(score.values())
         if whole == 0:
-            return .5
-        return score[color] / whole
+            return 0
+        return score[color] - whole / len(score)
 
     def write(self, x, y, action):
         return "{}:{} {} {}".format(x, y, action, choice(self.voices))
