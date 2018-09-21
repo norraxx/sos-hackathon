@@ -77,20 +77,21 @@ def start():
     step = 0
     max_step_count = len(bot_names) * 50
 
-    for i, bot_name in enumerate(bot_names):
-        if step > max_step_count:
-            print("WAT!??")
-            break
-        robot_color = bot_colors[i]
-        print ("\n".join(map_))
-        robot_action = run_script(bot_name, map_, robot_color)
-        print(robot_action)
-        valid, position, action, text = validate(map_, robot_color, robot_action)
-        if not valid:
-            raise Exception("WTF!", robot_action)
-        # todo: klara
-        map_ = run_map(map_, position, action, robot_color)
-        step += 1
+    for _ in range(50):
+        for i, bot_name in enumerate(bot_names):
+            if step > max_step_count:
+                print("WAT!??")
+                break
+            robot_color = bot_colors[i]
+            print("\n".join(map_))
+            robot_action = run_script(bot_name, map_, robot_color)
+            print(robot_action)
+            valid, position, action, text = validate(map_, robot_color, robot_action)
+            if not valid:
+                raise Exception("WTF!", robot_action)
+            # todo: klara
+            map_ = run_map(map_, position, action, robot_color)
+            step += 1
 
 
 def validate(robot_map, robot_color, robot_action):
@@ -102,7 +103,7 @@ def validate(robot_map, robot_color, robot_action):
         action = input[1]
 
         if action not in ACTIONS:
-            print ('invalid actions')
+            print ('invalid actions', action)
             return False, (None, None), None, None
 
         position = input[0]
@@ -116,12 +117,12 @@ def validate(robot_map, robot_color, robot_action):
             or position_x < 0
             or position_y < 0
         ):
-            print('invalid positions')
+            print('invalid positions', position)
             return False, (None, None), None, None
 
         real_robot = robot_map[position_y][position_x]
         if real_robot != robot_color:
-            print('invalid wrong color "{}" {}, ({}, {})'.format(real_robot, robot_color, position_x, position_y))
+            print('invalid wrong color "{}" {}, {}'.format(real_robot, robot_color, position))
             return False, (None, None), None, None
 
         return True, (position_x, position_y), action, input[2:]
