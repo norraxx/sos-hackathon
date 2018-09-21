@@ -60,9 +60,10 @@ def validate(robot_map, robot_color, robot_action):
         if (
             position_y >= len(robot_map)
             or position_x >= len(robot_map[0])
-        ): # TODO
+            or position_x < 0
+            or position_y < 0
+        ):
             return False, (None, None), None, None
-
 
         real_robot = robot_map[position_y][position_x]
         if real_robot != robot_color:
