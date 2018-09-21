@@ -42,16 +42,35 @@ def start():
 
 
 def validate(robot_map, robot_color, robot_action):
-    # robot_action: str
-    input = robot_action.split()
-    action = input[1]
+    # robot_map = pole radku mapy
+    # robot_color = barva robota
+    # robot_action = akce co dela robot
+    try:
+        input = robot_action.split()
+        action = input[1]
 
-    if action not in ACTIONS:
-        return False
+        if action not in ACTIONS:
+            return False, (None, None), None, None
 
-    position = input[0]
+        position = input[0]
+        position_x, position_y = position.split(":", 2)
+        position_x = int(position_x)
+        position_y = int(position_y)
 
-    return True
+        if (
+            position_y >= len(robot_map)
+            or position_x >= len(robot_map[0])
+        ): # TODO
+            return False, (None, None), None, None
+
+
+        real_robot = robot_map[position_y][position_x]
+        if real_robot != robot_color:
+            return False, (None, None), None, None
+
+        return True, (position_x, position_y), action, input[2:]
+    except Exception:
+        return False, (None, None), None, None
 
 
 if __name__ == "__main__":
