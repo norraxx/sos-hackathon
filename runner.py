@@ -1,5 +1,6 @@
 import subprocess
 import sys
+from time import sleep
 # 1. nacitat mapu - V
 # 2. spustit skript se vstupem a precist vystup - V
 # 3. zvalidovat vystup - V
@@ -11,7 +12,9 @@ import sys
 bot_colors = ["A", "B", "C", "D"]
 ACTIONS = ["BUM!", "UP", "DOWN", "LEFT", "RIGHT"]
 MOVE = [(0, 0), (-1, 0), (1, 0), (0, -1), (0, 1)]
-MAX_STEPS = 20
+MOVE_ACTION = ["*", "^", "v", "<", ">"]
+MAX_STEPS = 50
+SLEEP_TIME = 1
 
 
 def read_map(file_name):
@@ -37,11 +40,15 @@ def run_map(map_, position, action, robot_color):
     xpos, ypos = position
 
     new_map = []
+    copy_map = []
     for row in map_:
         new_map.append([row[i] for i, letter in enumerate(row)])
+        copy_map.append([row[i] for i, letter in enumerate(row)])
     map_ = new_map
 
     map_[ypos][xpos] = " "  # zrusime aktualni pozici, uz tam nikdy nikdo nebude
+    move_char = MOVE_ACTION[ACTIONS.index(action)]
+    copy_map[ypos][xpos] = move_char
 
     if action == ACTIONS[0]:  # BUM!
         tmp_xpos = xpos
@@ -49,33 +56,39 @@ def run_map(map_, position, action, robot_color):
             tmp_xpos += 1
             score += compute_score(map_, ypos, tmp_xpos)
             map_[ypos][tmp_xpos] = " "
+            copy_map[ypos][tmp_xpos] = move_char
 
         tmp_xpos = xpos
         while 0 <= tmp_xpos < xmax and map_[ypos][tmp_xpos-1] != "#":
             tmp_xpos -= 1
             score += compute_score(map_, ypos, tmp_xpos)
             map_[ypos][tmp_xpos] = " "
+            copy_map[ypos][tmp_xpos] = move_char
 
         tmp_ypos = ypos
         while 0 <= tmp_ypos < ymax and map_[tmp_ypos+1][xpos] != "#":
             tmp_ypos += 1
             score += compute_score(map_, tmp_ypos, xpos)
             map_[tmp_ypos][xpos] = " "
+            copy_map[tmp_ypos][xpos] = move_char
 
         tmp_ypos = ypos
         while 0 <= tmp_ypos < ymax and map_[tmp_ypos-1][xpos] != "#":
             tmp_ypos -= 1
             score += compute_score(map_, tmp_ypos, xpos)
             map_[tmp_ypos][xpos] = " "
+            copy_map[tmp_ypos][xpos] = move_char
     else:
         while 0 <= xpos < xmax and 0 <= ypos < ymax and map_[ypos + y][xpos + x] == " ":
             xpos += x
             ypos += y
+            copy_map[ypos][xpos] = move_char
         map_[ypos][xpos] = robot_color
+        copy_map[ypos][xpos] = robot_color
 
     map_ = ["".join(row) for row in map_]
-
-    return map_, score
+    copy_map = ["".join(row) for row in copy_map]
+    return map_, score, copy_map
 
 
 def run_script(bot_name, map_, robot_color):
@@ -100,6 +113,7 @@ def start():
         bots_ended = {}
         for _ in range(MAX_STEPS):
             if len(bots_ended) == len(bot_names):
+                print("Boti nestihly se ukoncit vcas")
                 break
             for i, bot_name in enumerate(bot_names):
                 if step > max_step_count:
@@ -112,15 +126,17 @@ def start():
                     break
 
                 robot_action = run_script(bot_name, map_, robot_color)
-                print("\n".join(map_))
-                print(bot_name, robot_action)
                 valid, position, action, text = validate(map_, robot_color, robot_action)
                 if not valid:
                     raise Exception("WTF!", robot_action)
                 # todo: klara
-                map_, score = run_map(map_, position, action, robot_color)
+                map_, score, map_to_print = run_map(map_, position, action, robot_color)
+                print("\n".join(map_to_print))
+                print(bot_name, robot_action)
+
                 scores[robot_color] += score
                 step += 1
+                sleep(SLEEP_TIME)
     except:
         pass
     print(scores)
